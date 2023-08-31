@@ -3,11 +3,8 @@
     "modid": "MasksHideNames",
     "name": "MasksHideNames",
     "authors": [
-        "Unknown"
+        "Ridderrasmus"
     ],
-    "description": "To be added",
-    "version": "1.0.0",
-    "dependencies": {
-        "game": ""
-    }
+    "description": "A mod that hides playernames when they're wearing a mask.'",
+    "version": "0.0.1"
 }
