@@ -17,31 +17,34 @@ namespace MasksHideNames
             DisguiseHelper.config = config;
         }
 
-        public static bool DisguiseCheck(IPlayer player)
+        public static bool DisguiseCheck(EntityPlayer player)
         {
-            return false;
+            //return false;
 
             if (player == null)
                 return false;
 
-            foreach (ItemSlot slot in player.Entity.GearInventory)
+            foreach (ItemSlot slot in player.GearInventory)
             {
                 if (slot.Empty)
                     continue;
 
-                if (slot == player.Entity.GearInventory[8] && !config.BlacklistedMasks.Contains(slot.Itemstack.Item.Code.ToString()))
+                if (slot == player.GearInventory[8] && !config.BlacklistedMasks.Contains(slot.Itemstack.Item.Code.ToString()))
                 {
+                    capi.Logger.Debug("Mask found!");
                     return true;
                 }
                 else
                 {
                     if (config.Disguises.Contains(slot.Itemstack.Item.Code.ToString()))
                     {
+                        capi.Logger.Debug("Disguise found!");
                         return true;
                     }
                 }
             }
 
+            capi.Logger.Debug("No disguise found!");
             return false;
         }
     }

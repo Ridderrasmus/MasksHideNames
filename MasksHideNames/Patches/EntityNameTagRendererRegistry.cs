@@ -26,30 +26,24 @@ namespace MasksHideNames.Patches
         {
             if (entity is not EntityPlayer playerEntity) return;
 
-            IPlayer player = playerEntity.World.PlayerByUid(playerEntity.PlayerUID);
+            var name = playerEntity.WatchedAttributes.GetString("maskshidenames:realName", "ERROR");
 
-
-            var name = player.PlayerName;
-
-            if (DisguiseHelper.DisguiseCheck(player))
+            if (DisguiseHelper.DisguiseCheck(playerEntity))
                 name = "???";
 
-            entity.GetBehavior<EntityBehaviorNameTag>()?.SetName(name);
+            entity.WatchedAttributes.GetTreeAttribute("nametag").SetString("name", name);
         }
 
         private static void DefaultNameTagRenderer(ref LoadedTexture __result, Entity entity)
         {
             if (entity is not EntityPlayer playerEntity) return;
-
-            IPlayer player = playerEntity.World.PlayerByUid(playerEntity.PlayerUID);
-
-
-            var name = player.PlayerName;
-
-            if (DisguiseHelper.DisguiseCheck(player))
-                name = "???";
             
-            entity.GetBehavior<EntityBehaviorNameTag>()?.SetName(name);
+            var name = playerEntity.WatchedAttributes.GetString("maskshidenames:realName", "ERROR");
+            
+            if (DisguiseHelper.DisguiseCheck(playerEntity))
+                name = "???";
+
+            entity.WatchedAttributes.GetTreeAttribute("nametag").SetString("name", name);
         }
 
         

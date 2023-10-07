@@ -38,14 +38,16 @@ namespace MasksHideNames
 
         private void Event_PlayerSpawn(IClientPlayer byPlayer)
         {
+            byPlayer.Entity.WatchedAttributes.SetString("maskshidenames:realName", byPlayer.PlayerName);
+
             //Do a check to see if the player is wearing a mask and handle accordingly
-            if(DisguiseHelper.DisguiseCheck(byPlayer))
+            if(DisguiseHelper.DisguiseCheck(byPlayer.Entity))
                 byPlayer.Entity.WatchedAttributes.MarkPathDirty("nametag");
 
             //Register an event for when the player's gear inventory changes that will call MaskCheck
             byPlayer.Entity.GearInventory.SlotModified += (slotint) => 
-            { 
-                if (DisguiseHelper.DisguiseCheck(byPlayer))
+            {
+                if (DisguiseHelper.DisguiseCheck(byPlayer.Entity))
                     byPlayer.Entity.WatchedAttributes.MarkPathDirty("nametag");
             };
         }
