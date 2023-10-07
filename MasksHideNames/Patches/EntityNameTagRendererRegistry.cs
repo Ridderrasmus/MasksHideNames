@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using MasksHideNames.Gui;
 using System.Reflection;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -23,20 +22,36 @@ namespace MasksHideNames.Patches
             harmony.Patch(OriginalMethod2, prefix: new HarmonyMethod(PrefixMethod2));
         }
 
-        private static bool DefaultEntitlementTagRenderer_renderTag(ref LoadedTexture __result, double[] ___color, TextBackground ___background, Entity entity)
+        private static void DefaultEntitlementTagRenderer_renderTag(ref LoadedTexture __result, double[] ___color, TextBackground ___background, Entity entity)
         {
-            if (entity is not EntityPlayer player) return true;
+            if (entity is not EntityPlayer playerEntity) return;
 
-            __result = PlayerNameTagRenderer.GetRenderer(player, ___color, ___background);
-            return false;
+            IPlayer player = playerEntity.World.PlayerByUid(playerEntity.PlayerUID);
+
+
+            var name = player.PlayerName;
+
+            if (DisguiseHelper.DisguiseCheck(player))
+                name = "???";
+
+            entity.GetBehavior<EntityBehaviorNameTag>()?.SetName(name);
         }
 
-        private static object DefaultNameTagRenderer(ref LoadedTexture __result, Entity entity)
+        private static void DefaultNameTagRenderer(ref LoadedTexture __result, Entity entity)
         {
-            if (entity is not EntityPlayer player) return true;
+            if (entity is not EntityPlayer playerEntity) return;
 
-            __result = PlayerNameTagRenderer.GetRenderer(player);
-            return false;
+            IPlayer player = playerEntity.World.PlayerByUid(playerEntity.PlayerUID);
+
+
+            var name = player.PlayerName;
+
+            if (DisguiseHelper.DisguiseCheck(player))
+                name = "???";
+            
+            entity.GetBehavior<EntityBehaviorNameTag>()?.SetName(name);
         }
+
+        
     }
 }
