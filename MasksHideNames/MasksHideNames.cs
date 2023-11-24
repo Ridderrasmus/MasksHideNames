@@ -1,7 +1,11 @@
 ﻿using MasksHideNames.Config;
+using MasksHideNames.Networking;
 using MasksHideNames.Patches;
+using MasksHideNames.Utils;
+using System;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Common.CommandAbbr;
 using Vintagestory.API.Server;
 
 namespace MasksHideNames
@@ -19,13 +23,36 @@ namespace MasksHideNames
         {
             ModConfig.ReadConfig(api);
             config = ModConfig.Config;
+
+            new DisguiseHelper(api, config);
+
+            NetworkHandler.RegisterCommonNetworking(api, config);
+        }
+
+        public override void StartServerSide(ICoreServerAPI api)
+        {
+            sapi = api;
+
+            CmdHandler.RegisterCommands(sapi, config);
+
+            NetworkHandler.RegisterServerNetworking(sapi);
+
+            sapi.Event.PlayerJoin += Event_PlayerJoin;
+
+        }
+
+        private void Event_PlayerJoin(IServerPlayer byPlayer)
+        {
+            string name = DisguiseHelper.GetPlayerName(byPlayer);
         }
 
         public override void StartClientSide(ICoreClientAPI api)
         {
             this.capi = api;
 
-            new DisguiseHelper(api, config);
+            
+
+            NetworkHandler.RegisterClientNetworking(capi);
             
             patchHandler = new PatchHandler("maskshidenames");
             patchHandler.Patch();
@@ -38,23 +65,16 @@ namespace MasksHideNames
 
         private void Event_PlayerSpawn(IClientPlayer byPlayer)
         {
-            byPlayer.Entity.WatchedAttributes.SetString("maskshidenames:realName", byPlayer.PlayerName);
+            if (byPlayer.Entity == null)
+                return;
 
-            //Do a check to see if the player is wearing a mask and handle accordingly
-            if(DisguiseHelper.DisguiseCheck(byPlayer.Entity))
-                byPlayer.Entity.WatchedAttributes.MarkPathDirty("nametag");
+            NetworkHandler.RequestDisguiseInfo(byPlayer.PlayerUID);
 
             //Register an event for when the player's gear inventory changes that will call MaskCheck
             byPlayer.Entity.GearInventory.SlotModified += (slotint) => 
             {
-                if (DisguiseHelper.DisguiseCheck(byPlayer.Entity))
-                    byPlayer.Entity.WatchedAttributes.MarkPathDirty("nametag");
+                NetworkHandler.RequestDisguiseInfo(byPlayer.PlayerUID);
             };
-        }
-
-        public override void Dispose()
-        {
-            capi.Event.PlayerEntitySpawn -= Event_PlayerSpawn;
         }
     }
 }

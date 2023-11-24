@@ -31,7 +31,7 @@ namespace MasksHideNames.Patches
             if (DisguiseHelper.DisguiseCheck(playerEntity))
                 name = "???";
 
-            entity.WatchedAttributes.GetTreeAttribute("nametag").SetString("name", name);
+            //entity.WatchedAttributes.GetTreeAttribute("nametag").SetString("name", name);
         }
 
         private static void DefaultNameTagRenderer(ref LoadedTexture __result, Entity entity)
@@ -43,7 +43,7 @@ namespace MasksHideNames.Patches
             if (DisguiseHelper.DisguiseCheck(playerEntity))
                 name = "???";
 
-            entity.WatchedAttributes.GetTreeAttribute("nametag").SetString("name", name);
+            //entity.WatchedAttributes.GetTreeAttribute("nametag").SetString("name", name);
         }
 
         

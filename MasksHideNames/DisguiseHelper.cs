@@ -1,4 +1,5 @@
 ﻿using MasksHideNames.Config;
+using MasksHideNames.Networking;
 using System.Linq;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -8,13 +9,40 @@ namespace MasksHideNames
 {
     public class DisguiseHelper
     {
-        private static ICoreClientAPI capi;
+        private static ICoreAPI api;
         private static MasksHideNamesConfig config;
 
-        public DisguiseHelper(ICoreClientAPI capi, MasksHideNamesConfig config)
+        public DisguiseHelper(ICoreAPI api, MasksHideNamesConfig config)
         {
-            DisguiseHelper.capi = capi;
+            DisguiseHelper.api = api;
             DisguiseHelper.config = config;
+        }
+
+        public static void UpdatePlayerName(IPlayer player, string newPlayerName)
+        {
+            if (player == null)
+                return;
+
+            if (!config.PlayerNames.ContainsKey(player.PlayerUID))
+                config.PlayerNames.Add(player.PlayerUID, newPlayerName);
+            else
+                config.PlayerNames[player.PlayerUID] = newPlayerName;
+
+            ModConfig.Save(api);
+        }
+
+        public static string GetPlayerName(IPlayer player)
+        {
+            if (player == null)
+                return null;
+
+            if (!config.PlayerNames.ContainsKey(player.PlayerUID))
+            {
+                config.PlayerNames.Add(player.PlayerUID, player.PlayerName);
+                ModConfig.Save(api);
+            }
+            
+            return config.PlayerNames[player.PlayerUID];
         }
 
         public static bool DisguiseCheck(EntityPlayer player)
@@ -31,20 +59,20 @@ namespace MasksHideNames
 
                 if (slot == player.GearInventory[8] && !config.BlacklistedMasks.Contains(slot.Itemstack.Item.Code.ToString()))
                 {
-                    capi.Logger.Debug("Mask found!");
+                    api.Logger.Debug("Mask found!");
                     return true;
                 }
                 else
                 {
                     if (config.Disguises.Contains(slot.Itemstack.Item.Code.ToString()))
                     {
-                        capi.Logger.Debug("Disguise found!");
+                        api.Logger.Debug("Disguise found!");
                         return true;
                     }
                 }
             }
 
-            capi.Logger.Debug("No disguise found!");
+            api.Logger.Debug("No disguise found!");
             return false;
         }
     }

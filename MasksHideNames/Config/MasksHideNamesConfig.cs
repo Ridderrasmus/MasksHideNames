@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace MasksHideNames.Config
 {
@@ -7,6 +8,7 @@ namespace MasksHideNames.Config
         public bool DisguisesEnabled = true;
         public string[] BlacklistedMasks = new string[] { "game:clothes-face-forgotten", "othermodid:othermask" };
         public string[] Disguises = new string[] { "game:some-sort-of-armor" };
+        public Dictionary<string, string> PlayerNames = new Dictionary<string, string>();
         
         public MasksHideNamesConfig() { }
 
@@ -15,6 +17,7 @@ namespace MasksHideNames.Config
             DisguisesEnabled = config.DisguisesEnabled;
             BlacklistedMasks = config.BlacklistedMasks;
             Disguises = config.Disguises;
+            PlayerNames = config.PlayerNames;
         }
 
     }
