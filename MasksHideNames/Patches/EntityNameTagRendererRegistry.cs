@@ -22,30 +22,29 @@ namespace MasksHideNames.Patches
             harmony.Patch(OriginalMethod2, prefix: new HarmonyMethod(PrefixMethod2));
         }
 
+        private static void DefaultNameTagRenderer(ref LoadedTexture __result, Entity entity)
+        {
+            //if (entity is not EntityPlayer playerEntity) return;
+            
+            //var name = playerEntity.WatchedAttributes.GetString("maskshidenames:realName", "ERROR");
+            
+            //if (DisguiseHelper.DisguiseCheck(playerEntity))
+            //    name = "???";
+
+            //entity.WatchedAttributes.GetTreeAttribute("nametag").SetString("name", name);
+        }
+
         private static void DefaultEntitlementTagRenderer_renderTag(ref LoadedTexture __result, double[] ___color, TextBackground ___background, Entity entity)
         {
             if (entity is not EntityPlayer playerEntity) return;
+            ICoreClientAPI capi = entity.Api as ICoreClientAPI;
 
-            var name = playerEntity.WatchedAttributes.GetString("maskshidenames:realName", "ERROR");
+            string name = playerEntity.WatchedAttributes.GetString("maskshidenames:realName", "ERROR");
 
             if (DisguiseHelper.DisguiseCheck(playerEntity))
                 name = "???";
 
-            //entity.WatchedAttributes.GetTreeAttribute("nametag").SetString("name", name);
-        }
-
-        private static void DefaultNameTagRenderer(ref LoadedTexture __result, Entity entity)
-        {
-            if (entity is not EntityPlayer playerEntity) return;
-            
-            var name = playerEntity.WatchedAttributes.GetString("maskshidenames:realName", "ERROR");
-            
-            if (DisguiseHelper.DisguiseCheck(playerEntity))
-                name = "???";
-
-            //entity.WatchedAttributes.GetTreeAttribute("nametag").SetString("name", name);
-        }
-
-        
+            __result = capi.Gui.TextTexture.GenUnscaledTextTexture(name, CairoFont.WhiteMediumText().WithColor(___color), ___background);
+        }        
     }
 }

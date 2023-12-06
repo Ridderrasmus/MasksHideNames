@@ -28,6 +28,7 @@ namespace MasksHideNames
             else
                 config.PlayerNames[player.PlayerUID] = newPlayerName;
 
+            player.Entity.WatchedAttributes.MarkPathDirty("nametag");
             ModConfig.Save(api);
         }
 
@@ -62,14 +63,13 @@ namespace MasksHideNames
                     api.Logger.Debug("Mask found!");
                     return true;
                 }
-                else
+                
+                if (config.Disguises.Contains(slot.Itemstack.Item.Code.ToString()))
                 {
-                    if (config.Disguises.Contains(slot.Itemstack.Item.Code.ToString()))
-                    {
-                        api.Logger.Debug("Disguise found!");
-                        return true;
-                    }
+                    api.Logger.Debug("Disguise found!");
+                    return true;
                 }
+                
             }
 
             api.Logger.Debug("No disguise found!");
